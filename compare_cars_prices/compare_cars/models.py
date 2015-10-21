@@ -1,0 +1,25 @@
+import datetime
+from django.db import models
+from django.utils import timezone
+
+
+
+class CarDetails(models.Model):
+	website_name = models.CharField(max_length=100,blank=True)
+	city = models.CharField(max_length=100,blank=True)
+	makes = models.CharField(max_length=100,blank=True)
+	car_model =models.CharField(max_length=100,blank=True)
+	price = models.IntegerField(blank=True)
+	model_year = models.IntegerField(max_length=50,blank=True)
+	car_title = models.CharField(max_length=500,blank=True)
+	car_href = models.URLField(max_length=5000,blank=True)
+	car_image = models.ImageField(max_length=500,blank=True)
+	car_color = models.CharField(max_length=50,blank=True)
+	created = models.DateTimeField(default=timezone.now)
+	updated = models.DateTimeField(auto_now=True)
+
+	def __str__(self):
+		return self.website_name
+
+
+# Create your models here.
