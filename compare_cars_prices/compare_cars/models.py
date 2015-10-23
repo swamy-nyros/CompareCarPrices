@@ -10,7 +10,7 @@ class CarDetails(models.Model):
 	makes = models.CharField(max_length=100,blank=True)
 	car_model =models.CharField(max_length=100,blank=True)
 	price = models.IntegerField(blank=True)
-	model_year = models.IntegerField(max_length=50,blank=True)
+	model_year = models.IntegerField(blank=True)
 	car_title = models.CharField(max_length=500,blank=True)
 	car_href = models.URLField(max_length=5000,blank=True)
 	car_image = models.ImageField(max_length=500,blank=True)
