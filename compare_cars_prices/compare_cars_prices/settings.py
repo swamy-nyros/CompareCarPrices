@@ -77,8 +77,12 @@ WSGI_APPLICATION = 'compare_cars_prices.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'CompareCarsDB',
+        'USER': 'Cars_admin',
+        'PASSWORD': 'Cars_admin',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 
@@ -88,8 +92,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Asia/Kolkata'
-
+TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_L10N = True
