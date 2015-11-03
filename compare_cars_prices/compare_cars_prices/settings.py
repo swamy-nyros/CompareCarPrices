@@ -33,20 +33,9 @@ USE_L10N = True
 USE_TZ = True
 
 SITE_ID = 1
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'f3^mz$ejx2oioz-c1qtr59k^1n_qn*+wxxo&0jpzq3rnt99a-i'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-
 
 STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT, "static"),
-    # Put strings here, like "/home/html/static" or "C:/www/django/static".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
 )
 
 # List of finder classes that know how to find static files in
@@ -150,33 +139,6 @@ CELERYBEAT_SCHEDULE = {
     },
 }
 
-
-
-# Database
-# https://docs.djangoproject.com/en/1.8/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'CompareCarsDB',
-#         'USER': 'Cars_admin',
-#         'PASSWORD': 'Cars_admin',
-#         'HOST': 'localhost',
-#         'PORT': '3306',
-#     }
-# }
-
-#ROOT_URLCONF = 'compare_cars.urls'
-# Internationalization
-# https://docs.djangoproject.com/en/1.8/topics/i18n/
-
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.8/howto/static-files/
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
-
-
 
  
