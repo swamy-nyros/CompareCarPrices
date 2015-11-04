@@ -6,7 +6,5 @@ db.sqlite3
 *.py[cod]
 *.sqlite3
 wsgi.py
-local_settings.py
 run/
-static/media/uploads/*
 logs/

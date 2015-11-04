@@ -294,9 +294,18 @@ def cartrade_scrap(request):
 
             try:
                 price_car= price=data.find_element_by_css_selector('div.titleblk div.pull-left.carlistcont div.price div.pull-left strong.pull-left').text
+                
+
+                price_car_1 = int(price_car.replace(",",""))
+                print price_car
+                
+                print 'price_car_1'
+                print price_car_1
+                print type(price_car_1)
+
             except:
                 price_car = "3,50,000"
-            
+                
             scrollDown(driver, 1)
             time.sleep(3)
             try:
@@ -305,12 +314,8 @@ def cartrade_scrap(request):
             except:
                 image = "http://imagecdn5.cartrade.com/img/300x225/lis/Maruti-Suzuki_A-Star_491097_20983_1_1435575807451.jpg"
                 print image         
-            try:
-                year = int(title.split("(")[1].split(")"))[0]
-                print year
-            except:
-                year = 2014
-                print year
+            year = title.split("(")[1].split(")")[0]
+            print year
             time.sleep(1)
             CarDetails.objects.update_or_create(
                 website_name="www.cartrade.com",
