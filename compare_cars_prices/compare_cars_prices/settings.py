@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'compare_cars',
+    'cars_scrapping',
 )
 
 MIDDLEWARE_CLASSES = (

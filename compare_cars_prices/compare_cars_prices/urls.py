@@ -18,5 +18,5 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^cars/', include('compare_cars.urls', namespace='cars')),
+    url(r'^cars/', include('cars_scrapping.urls', namespace='cars')),
 ]
