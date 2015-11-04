@@ -20,7 +20,7 @@ class Car_Master_Data(models.Model):
 class CarDetails(models.Model):
 	website_name = models.CharField(max_length=100,blank=True)
 	city = models.CharField(max_length=100,blank=True)
-	makes = models.CharField(max_length=100,blank=True)
+	car_make = models.CharField(max_length=100,blank=True)
 	car_model =models.CharField(max_length=100,blank=True)
 	price = models.CharField(max_length=100,blank=True)
 	model_year = models.CharField(max_length=100,blank=True)
