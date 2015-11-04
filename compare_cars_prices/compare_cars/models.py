@@ -17,7 +17,7 @@ class Car_Master_Data(models.Model):
 		return self.website_name
 
 
-class CarMakeDetails(models.Model):
+class CarDetails(models.Model):
 	website_name = models.CharField(max_length=100,blank=True)
 	city = models.CharField(max_length=100,blank=True)
 	makes = models.CharField(max_length=100,blank=True)

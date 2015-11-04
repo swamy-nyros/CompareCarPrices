@@ -1,3 +1,6 @@
 from django.contrib import admin
+from compare_cars.models import Car_Master_Data
 
-# Register your models here.
+admin.site.register(Car_Master_Data)
+
+
