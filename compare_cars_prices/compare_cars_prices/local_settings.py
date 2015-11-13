@@ -1,4 +1,5 @@
 import os.path
+import sys
 
 DEBUG = True
 
@@ -28,16 +29,73 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'CompareCarsDB',
-        'USER': 'Cars_admin',
-        'PASSWORD': 'Cars_admin',
-        'HOST': 'localhost',
-        'PORT': '3306',
-    }
-}
+TESTSERVER = 'testserver' in sys.argv
+TESTING = 'test' in sys.argv or 'testserver' in sys.argv
+
+if 'test' in sys.argv:
+    DATABASES = dict (
+        default = dict (
+            ENGINE = 'django.db.backends.sqlite3',
+            TEST = dict (
+                #NAME = 'testeracksdb',              # setting NAME here means don't create in-memory sqlite test db
+                SERIALIZE = False
+            )
+        ),
+    )
+    if TESTSERVER:
+        DATABASES ['default'] ['TEST'] ['NAME'] = 'testeracksdb'
+else:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.mysql',
+                'NAME': 'CompareCarsDB',
+                'USER': 'Cars_admin',
+                'PASSWORD': 'Cars_admin',
+                'HOST': 'localhost',
+                'PORT': '3306',
+                'TEST_NAME':'CompareCarsDB_test',
+            }
+        }
+
+
+# DATABASES = {
+#     'default': {
+#         # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         # Or path to database file if using sqlite3.
+#         'NAME': 'comparecarsdb',
+#         # The following settings are not used with sqlite3:
+#         'USER': 'postgres',
+#         'PASSWORD': 'admin',
+#         # Empty for localhost through domain sockets or '127.0.0.1' for
+#         # localhost through TCP.
+#         'HOST': 'localhost',
+#         'PORT': '5432',               
+#     }
+# }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'CompareCarsDB',
+#         'USER': 'Cars_admin',
+#         'PASSWORD': 'Cars_admin',
+#         'HOST': 'localhost',
+#         'PORT': '3306',
+#     }
+# }
+
+
+
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
+
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'secret'
 

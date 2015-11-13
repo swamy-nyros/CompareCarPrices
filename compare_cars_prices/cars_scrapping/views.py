@@ -3,10 +3,11 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
 from django.http import HttpResponse
-
+from django.conf import settings
+import csv
 from compare_cars.models import Car_Master_Data,CarDetails
 
-def master_data(request):
+def masterdata_carwale(request):
 
     city_id = ['105','2','12','3000','176','198','128','10','224','244']
     cities=['Hyderabad', 'Bangalore' , 'Pune', 'Mumbai','Chennai' ,'Kolkata', 'Ahmedabad', 'Delhi','Noida','Chandigarh']
@@ -97,84 +98,8 @@ def master_data(request):
 
     return HttpResponse("master data of carwale stored into the database successfully")
 
-def scrollDown(driver, numberOfScrollDowns):
-    body = driver.find_element_by_tag_name("body")
-    while numberOfScrollDowns >=0:
-        body.send_keys(Keys.PAGE_DOWN)
-        numberOfScrollDowns -= 1
-    return driver
-
-
-
-def carwale(request):
-    driver = webdriver.Firefox()
-    all_cars = Car_Master_Data.objects.all()
-    for car in all_cars:
-        driver.get("http://www.carwale.com/used/cars-for-sale/")
-        print driver.title
-        time.sleep(2)
-        car_city = car.city_id
-        car_make = car.make_id
-        car_model = car.model_id
-        city_name=car.city_name
-        make_name=car.make_name
-        model_name=car.model_name
-        city = driver.find_element_by_css_selector('select#drpCity.form-control option[value="%s"]'%car_city)
-        city.click()
-        print city_name
-        time.sleep(2)
-        make = driver.find_element_by_css_selector("ul#makesList.ul-makes li.us-sprite.makeLi[carfilterid='%s']"%car_make) 
-        make.click()
-        print make_name
-        time.sleep(10)
-        model = driver.find_element_by_css_selector('ul#makesList.ul-makes li.us-sprite.makeLi div.list-points-models ul.rootUl li.us-sprite.rootLi[carfilterid="%s"]'%car_model)
-        model.click()
-        print model_name
-        time.sleep(2)
-        print '********cardata****'
-        driver = scrollDown(driver, 2)
-        car_data_list = [element for element in driver.find_elements_by_css_selector('div.stock-list ul#listing1.ko-listing li.listing-adv.listingContent.padding-top10.padding-bottom10.cur-pointer div.stock-detail')]        
-        print "*********"*12
-        print city_name
-        time.sleep(2)
-        for data in car_data_list:
-            price = data.find_element_by_css_selector('div.leftfloat.table-div.margin-left20 span.rupee-lac.slprice.font20').text
-            print price
-            time.sleep(2)
-
-            title= data.find_element_by_css_selector('div.leftfloat.table-div.margin-left20 h2.listingTitle.font18 a').text
-            print title
-
-            href = data.find_element_by_css_selector('div.leftfloat.table-div.margin-left20 h2.listingTitle.font18 a').get_attribute("href")
-            print href
-            time.sleep(5)
-
-            driver = scrollDown(driver, 2)
-            print"scroll"
-
-            image = data.find_element_by_css_selector('div.leftfloat.thumb-div div.thumb-area div.img-placer a.slideShow img').get_attribute("src")
-            print image
-
-            year = data.find_element_by_css_selector('div.leftfloat.table-div.margin-left20 a.text-grey p.listingItemKms.font14.text-light-grey.margin-top5 span:nth-of-type(7)').text
-            print year
-
-            time.sleep(2)
-            CarDetails(website_name="www.carwale.com",
-                city=city_name,
-                car_make=make_name,
-                car_model=model_name,
-                price=price,
-                model_year=year,
-                car_title=title,
-                car_href=href,
-                car_image =image,
-                ).save()
-                        
-
-    return HttpResponse("carwale data stored into the database successfully")
-
-    
 def masterdata_cartrade(request):
+    time.sleep(10)
     city_list =['Hyderabad', 'Bangalore' , 'Pune', 'Mumbai','Chennai' ,'Kolkata', 'Ahmedabad', 'New Delhi','Noida','chandigarh']
     
     make_name= ['Maruthi suziki', ]   
@@ -204,7 +129,9 @@ def masterdata_cartrade(request):
     model_skoda_list = ["mod_Fabia","mod_Laura","mod_Superb","mod_Octavia","mod_Rapid"]  
 
     for city in city_list:
+        print city
         for make in make_list:
+            print make
             makename = make.split("hvmodels")[1]
             if  make == "hvmodelsMaruti-Suzuki":
                 for model in model_maruthi_list:
@@ -250,14 +177,123 @@ def masterdata_cartrade(request):
     return HttpResponse("successfully created master data for cartrade website")
 
 
-def cartrade_scrap(request):
+def scrollDown(driver, numberOfScrollDowns):
+    body = driver.find_element_by_tag_name("body")
+    while numberOfScrollDowns >=0:
+        body.send_keys(Keys.PAGE_DOWN)
+        numberOfScrollDowns -= 1
+    return driver
+
+
+
+def carwale_scrap(request):
     driver = webdriver.Firefox()
-    master_data = Car_Master_Data.objects.all()
+    all_cars = Car_Master_Data.objects.filter(website_name="www.carwale.com")
+    for car in all_cars:
+        driver.get("http://www.carwale.com/used/cars-for-sale/")
+        print driver.title
+        time.sleep(2)
+        car_city = car.city_id
+        car_make = car.make_id
+        car_model = car.model_id
+        city_name=car.city_name
+        make_name=car.make_name
+        model_name=car.model_name
+
+        try:
+            city = driver.find_element_by_css_selector('select#drpCity.form-control option[value="%s"]'%car_city)
+            city.click()
+            print city_name
+            time.sleep(2)
+        except:
+            pass
+
+        try:
+            make = driver.find_element_by_css_selector("ul#makesList.ul-makes li.us-sprite.makeLi[carfilterid='%s']"%car_make) 
+            make.click()
+            print make_name
+            time.sleep(10)
+        except:
+            pass
+
+        try:
+            model = driver.find_element_by_css_selector('ul#makesList.ul-makes li.us-sprite.makeLi div.list-points-models ul.rootUl li.us-sprite.rootLi[carfilterid="%s"]'%car_model)
+            model.click()
+            print model_name
+            time.sleep(2)
+        except:
+            pass
+
+        driver = scrollDown(driver, 2)
+
+        car_data_list = [element for element in driver.find_elements_by_css_selector('div.stock-list ul#listing1.ko-listing li.listing-adv.listingContent.padding-top10.padding-bottom10.cur-pointer div.stock-detail')]        
+        print "*********"*12
+        print city_name
+        time.sleep(2)
+        for data in car_data_list:
+            amount = data.find_element_by_css_selector('div.leftfloat.table-div.margin-left20 span.rupee-lac.slprice.font20').text
+            print amount
+            if(amount.endswith("lakhs")):
+                split_lakhs=amount.split("lakhs")
+                float_value=float(split_lakhs[0])
+                print float_value
+                muilt_value=100000
+                total=float_value*muilt_value
+                print total
+                price=int(total)
+                print price
+            else:
+                price=amount.replace(",","")
+                print price
+            title= data.find_element_by_css_selector('div.leftfloat.table-div.margin-left20 h2.listingTitle.font18 a').text
+            print title
+
+            href = data.find_element_by_css_selector('div.leftfloat.table-div.margin-left20 h2.listingTitle.font18 a').get_attribute("href")
+            print href
+            time.sleep(5)
+
+            driver = scrollDown(driver, 2)
+            print"scroll"
+
+            image = data.find_element_by_css_selector('div.leftfloat.thumb-div div.thumb-area div.img-placer a.slideShow img').get_attribute("src")
+            print image
+
+            year = data.find_element_by_css_selector('div.leftfloat.table-div.margin-left20 a.text-grey p.listingItemKms.font14.text-light-grey.margin-top5 span:nth-of-type(7)').text
+            print year
+
+            time.sleep(2)
+            print"*******"
+            try:
+                
+                CarDetails(website_name="www.carwale.com",
+                        city=city_name,
+                        car_make=make_name,
+                        car_model=model_name,
+                        price=price,
+                        model_year=year,
+                        car_title=title,
+                        car_href=href,
+                        car_image =image
+                        ).save()
+                print"try"
+            except:
+                print"exception"
+                pass 
+                
+    return HttpResponse("carwale data stored into the database successfully")
+
+# from pyvirtualdisplay import Display
+def cartrade_scrap(request):
+    # display = Display(visible=0, size=(1024, 768))
+    # display.start()
+    driver = webdriver.Firefox()
+    
+    master_data = Car_Master_Data.objects.filter(website_name="www.cartrade.com")
     for master in master_data:
         print master.city_id
         print master.make_id
         print master.model_id
-        
+
         driver.get('http://www.cartrade.com/buy-used-cars')
         try:
             close_popup = driver.find_element_by_css_selector('div#selectcityfilm a.closebtn')
@@ -265,15 +301,31 @@ def cartrade_scrap(request):
             close_popup.click()
         except:
             pass
-        select_city = driver.find_element_by_css_selector('div.leftbar select#sortcity  option[value^="%s"]'%master.city_id)
-        select_city.click()
-        time.sleep(1)
-        select_model = driver.find_element_by_css_selector('li#%s div.spclass span.rcircle'%master.make_id)
-        select_model.click()
-        time.sleep(1)
-        model_select =driver.find_element_by_css_selector('ul#mklist.features li#hvmodelsMaruti-Suzuki.hvchild.open ul#chmodelsMaruti-Suzuki li label input#%s'%master.model_id)
-        model_select.click()
-        time.sleep(1)
+
+        try:  
+            select_city = driver.find_element_by_css_selector('div.leftbar select#sortcity  option[value^="%s"]'%master.city_id)
+            select_city.click()
+            time.sleep(1)
+            print master.city_name
+        except:
+            pass
+
+        try:
+            select_make = driver.find_element_by_css_selector('li#%s div.spclass span.rcircle'%master.make_id)
+            select_make.click()
+            time.sleep(1)
+            print master.make_name
+        except:
+            pass
+
+        try:
+            model_select =driver.find_element_by_css_selector('ul#mklist.features li#hvmodelsMaruti-Suzuki.hvchild.open ul#chmodelsMaruti-Suzuki li label input#%s'%master.model_id)
+            model_select.click()
+            time.sleep(1)
+            print master.model_name
+        except:
+            pass
+
         car_data_list_total_div = [element for element in driver.find_elements_by_css_selector('div#searchFilters div.btmMrg.carlistblk div.widgetBox1 ')]
         for data in car_data_list_total_div:
             try:
@@ -290,15 +342,9 @@ def cartrade_scrap(request):
                 href = "http://www.chevrolet.co.in/trailblazer-powerful-suv.html?cmp=4456906_9138324_1673028_124445889_296988365_0"
 
             try:
-                price_car= price=data.find_element_by_css_selector('div.titleblk div.pull-left.carlistcont div.price div.pull-left strong.pull-left').text
-                
-
-                price_car_1 = int(price_car.replace(",",""))
+                price=data.find_element_by_css_selector('div.titleblk div.pull-left.carlistcont div.price div.pull-left strong.pull-left').text
+                price_car=price.replace(",","")
                 print price_car
-                
-                print 'price_car_1'
-                print price_car_1
-                print type(price_car_1)
 
             except:
                 price_car = "3,50,000"
@@ -314,7 +360,8 @@ def cartrade_scrap(request):
             year = title.split("(")[1].split(")")[0]
             print year
             time.sleep(1)
-            CarDetails.objects.update_or_create(
+            try:
+                CarDetails(
                 website_name="www.cartrade.com",
                 city=master.city_id,
                 car_make=master.make_name,
@@ -324,6 +371,312 @@ def cartrade_scrap(request):
                 car_title =title,
                 car_href = href,
                 car_image =image,
-                )
+                ).save()
+                print "saved"
+            except:
+                print "exception"
+                pass
+
+    # driver.close()
+    # display.stop()
 
     return HttpResponse("successfully scrapped cartrade")
+
+
+
+def carwale_update():
+    driver = webdriver.Firefox()
+    all_cars = Car_Master_Data.objects.filter(website_name="www.carwale.com")
+    for car in all_cars:
+        driver.get("http://www.carwale.com/used/cars-for-sale/")
+        print driver.title
+        time.sleep(2)
+        car_city = car.city_id
+        car_make = car.make_id
+        car_model = car.model_id
+        city_name=car.city_name
+        make_name=car.make_name
+        model_name=car.model_name
+        try:
+            city = driver.find_element_by_css_selector('select#drpCity.form-control option[value="%s"]'%car_city)
+            city.click()
+            print city_name
+            time.sleep(2)
+        except:
+            pass
+
+        try:
+            make = driver.find_element_by_css_selector("ul#makesList.ul-makes li.us-sprite.makeLi[carfilterid='%s']"%car_make) 
+            make.click()
+            print make_name
+            time.sleep(10)
+        except:
+            pass
+
+        try:
+            model = driver.find_element_by_css_selector('ul#makesList.ul-makes li.us-sprite.makeLi div.list-points-models ul.rootUl li.us-sprite.rootLi[carfilterid="%s"]'%car_model)
+            model.click()
+            print model_name
+            time.sleep(2)
+        except:
+            pass
+
+        driver = scrollDown(driver, 2)
+        car_data_list = [element for element in driver.find_elements_by_css_selector('div.stock-list ul#listing1.ko-listing li.listing-adv.listingContent.padding-top10.padding-bottom10.cur-pointer div.stock-detail')]        
+        print "*********"*12
+        print city_name
+        time.sleep(2)
+        for data in car_data_list:
+            amount = data.find_element_by_css_selector('div.leftfloat.table-div.margin-left20 span.rupee-lac.slprice.font20').text
+            print amount
+            if(amount.endswith("lakhs")):
+                split_lakhs=amount.split("lakhs")
+                float_value=float(split_lakhs[0])
+                print float_value
+                muilt_value=100000
+                total=float_value*muilt_value
+                print total
+                price=int(total)
+                print price
+            else:
+                price=amount.replace(",","")
+                print price
+            title= data.find_element_by_css_selector('div.leftfloat.table-div.margin-left20 h2.listingTitle.font18 a').text
+            print title
+
+            href = data.find_element_by_css_selector('div.leftfloat.table-div.margin-left20 h2.listingTitle.font18 a').get_attribute("href")
+            print href
+            time.sleep(5)
+
+            driver = scrollDown(driver, 2)
+            print"scroll"
+
+            image = data.find_element_by_css_selector('div.leftfloat.thumb-div div.thumb-area div.img-placer a.slideShow img').get_attribute("src")
+            print image
+
+            year = data.find_element_by_css_selector('div.leftfloat.table-div.margin-left20 a.text-grey p.listingItemKms.font14.text-light-grey.margin-top5 span:nth-of-type(7)').text
+            print year
+
+            time.sleep(2)
+            print"*******"
+            cars_detail = CarDetails.objects.all()
+            for detail in cars_detail:
+                href_detail=detail.car_href
+                save_detail=CarDetails(website_name="www.carwale.com",
+                                city=city_name,
+                                car_make=make_name,
+                                car_model=model_name,
+                                price=price,
+                                model_year=year,
+                                car_title=title,
+                                car_href=href,
+                                car_image =image,
+                                is_there=1,
+                                )
+                if(href!=href_detail):
+                    print "not equal"
+                    try:
+                        save_detail.save()
+                        print"saved"
+                    except:
+                        pass
+                else:
+                    print "already existed"
+                    CarDetails.objects.filter(car_href=href).update(website_name="www.carwale.com",
+                                city=city_name,
+                                car_make=make_name,
+                                car_model=model_name,
+                                price=price,
+                                model_year=year,
+                                car_title=title,
+                                car_href=href,
+                                car_image =image,
+                                is_there=1,
+                                )
+    return HttpResponse("updated")
+
+def carwale_delete():
+    cars_detail = CarDetails.objects.filter(is_there=0,website_name="www.carwale.com").delete()
+    print "deleted"
+    return HttpResponse("deleted")
+def carwale_active():
+    CarDetails.objects.filter(website_name="www.carwale.com").update(is_there=0)
+    print "is_there chaged to 0"
+    return HttpResponse("is_there to set 0")
+
+
+def cartrade_update():
+    driver = webdriver.Firefox()
+    master_data = Car_Master_Data.objects.filter(website_name="www.cartrade.com")
+    for master in master_data:
+        print master.city_id
+        print master.make_id
+        print master.model_id
+
+        driver.get('http://www.cartrade.com/buy-used-cars')
+        try:
+            close_popup = driver.find_element_by_css_selector('div#selectcityfilm a.closebtn')
+            time.sleep(1)
+            close_popup.click()
+        except:
+            pass
+
+        try:
+            select_city = driver.find_element_by_css_selector('div.leftbar select#sortcity  option[value^="%s"]'%master.city_id)
+            select_city.click()
+            time.sleep(1)
+        except:
+            pass
+
+        try:
+            select_model = driver.find_element_by_css_selector('li#%s div.spclass span.rcircle'%master.make_id)
+            select_model.click()
+            time.sleep(1)
+        except:
+            pass
+
+        try:
+            model_select =driver.find_element_by_css_selector('ul#mklist.features li#hvmodelsMaruti-Suzuki.hvchild.open ul#chmodelsMaruti-Suzuki li label input#%s'%master.model_id)
+            model_select.click()
+            time.sleep(1)
+        except:
+            pass
+
+        car_data_list_total_div = [element for element in driver.find_elements_by_css_selector('div#searchFilters div.btmMrg.carlistblk div.widgetBox1 ')]
+        for data in car_data_list_total_div:
+            try:
+                title = data.find_element_by_css_selector('div.titleblk div.pull-left.carlistcont div.h2heading').text
+                print title
+            except:
+                title = "Default Title"
+                print title
+
+            try:
+                href = data.find_element_by_css_selector('div.titleblk div.pull-left.carlistcont div.h2heading a').get_attribute("href")
+                print href
+            except:
+                href = "http://www.chevrolet.co.in/trailblazer-powerful-suv.html?cmp=4456906_9138324_1673028_124445889_296988365_0"
+
+            try:
+                price=data.find_element_by_css_selector('div.titleblk div.pull-left.carlistcont div.price div.pull-left strong.pull-left').text
+                price_car=price.replace(",","")
+                print "Amount"
+                print price_car
+
+            except:
+                price_car = "3,50,000"
+                
+            scrollDown(driver, 1)
+            time.sleep(3)
+            try:
+                image = data.find_element_by_css_selector('div.carimgblk a img').get_attribute("src")
+                print image
+            except:
+                image = "http://imagecdn5.cartrade.com/img/300x225/lis/Maruti-Suzuki_A-Star_491097_20983_1_1435575807451.jpg"
+                print image         
+            year = title.split("(")[1].split(")")[0]
+            print year
+            time.sleep(1)
+            cars_detail = CarDetails.objects.filter(website_name="www.cartrade.com")
+            for detail in cars_detail:
+                href_detail=detail.car_href
+                save_detail=CarDetails(
+                website_name="www.cartrade.com",
+                city=master.city_id,
+                car_make=master.make_name,
+                car_model= master.model_name,
+                price = price_car,
+                model_year=year,
+                car_title =title,
+                car_href = href,
+                car_image =image,
+                is_there=1,
+                )
+                if(href!=href_detail):
+                    print "not equal"
+                    try:
+                        save_detail.save()
+                        print"saved"
+                    except:
+                        pass
+                else:
+                    print "already existed"
+                    CarDetails.objects.filter(car_href=href).update(website_name="www.cartrade.com",
+                city=master.city_id,
+                car_make=master.make_name,
+                car_model= master.model_name,
+                price = price_car,
+                model_year=year,
+                car_title =title,
+                car_href = href,
+                car_image =image,
+                is_there=1,
+                )
+    return HttpResponse("updated")
+
+def cartrade_delete():
+    cars_detail = CarDetails.objects.filter(is_there=0,website_name="www.cartrade.com").delete()
+    print cars_detail
+    print "deleted"
+    return HttpResponse("deleted")
+
+def cartrade_active():
+    CarDetails.objects.filter(website_name="www.cartrade.com").update(is_there=0)
+    print "is_there chaged to 0"
+    return HttpResponse("is_there to set 0")
+
+
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+
+
+def search(request):
+    print "ddd"
+    
+    searchtxt = request.GET.get('q', '')
+    print searchtxt
+    context_object_name = 'city_list'
+    details = []
+    cities=['Hyderabad', 'Bangalore' , 'Pune', 'Mumbai','Chennai' ,'Kolkata', 'Ahmedabad', 'Delhi','Noida','Chandigarh']
+    for city in cities:
+        if(city==searchtxt):
+            # print city
+            details=CarDetails.objects.filter(city=city)
+            print details
+            print type(details)
+            return render_to_response('search.html', {'city_list':details}, context_instance=RequestContext(request))
+    
+    return render(request, 'search_details.html')
+
+
+def store_scrapdata(request):
+    print '***************'
+    print settings.PROJECT_ROOT
+    path = '%s/compare_cars_cardetails.csv'%(settings.PROJECT_ROOT)
+    print path
+    with open(path,'rb') as f:
+        data=[tuple(line) for line in csv.reader(f)]
+        for store in data:
+            print store[1]
+            print store[2]
+            print store[3]
+            print store[4]
+            print store[5]
+            print store[6]
+            print store[7]
+            print store[8]
+            print store[9]
+            print '**********'
+            print store[10]
+            print store[11]
+            store_scrapping = CarDetails(website_name=store[1],city=store[2],car_make=store[3],
+                car_model=store[4],price=store[5],model_year=store[6],
+                car_title=store[7],car_href=store[8],car_image=store[9],is_verified=0,
+                )
+            try:
+                store_scrapping.save()
+            except :
+                print("exception")
+                pass
+
+    return HttpResponse("data hasbeen stored into DB")

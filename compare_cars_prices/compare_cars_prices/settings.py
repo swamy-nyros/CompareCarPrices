@@ -17,11 +17,11 @@ import os.path
 import posixpath
 from local_settings import *
 
-import djcelery
+# import djcelery
 from cars_scrapping import *
 
-djcelery.setup_loader()
-# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# djcelery.setup_loader()
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 LANGUAGE_CODE = 'en-us'
 
@@ -71,6 +71,7 @@ INSTALLED_APPS = (
     'compare_cars',
     'cars_scrapping',
     'djcelery',
+    
 )
 
 MIDDLEWARE_CLASSES = (

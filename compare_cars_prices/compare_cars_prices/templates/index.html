@@ -14,7 +14,10 @@
                     </div>
                     <div class="row">
                         <div class="col-md-3"></div>    
-                        <div class="col-md-6 serh-blk"> <input type="text" class="form-control" placeholder="Enter City.." id="searchTop">
+                        <div class="col-md-6 serh-blk"> 
+                        <form>
+                            <input type="text" class="form-control" placeholder="Enter City...." ng-model="SearchFilter" ng-enter="onChange(SearchFilter)">
+                        </form>
                         <i class="glyphicon glyphicon-search"></i>
                         </div>
                         <div class="col-md-3"></div>    
@@ -25,6 +28,7 @@
         </div>  
     </div>      
         <div id="main-content" class="container">
+        
                 <ng-view view-state>
                 
                 </ng-view>
