@@ -1,6 +1,7 @@
 import datetime
 from django.db import models
 from django.utils import timezone
+# Create your models here.
 
 
 
@@ -29,6 +30,7 @@ class CarDetails(models.Model):
 	car_image = models.URLField(max_length=500,blank=True)
 	car_color = models.CharField(max_length=50,blank=True)
 	is_there= models.IntegerField(default=0)
+	is_verified = models.BooleanField(default=False)
 	created = models.DateTimeField(default=timezone.now)
 	updated = models.DateTimeField(auto_now=True)
 
@@ -37,7 +39,3 @@ class CarDetails(models.Model):
 		return self.website_name
 
 
-
-	def __str__(self):
-		return self.car_model
-# Create your models here.

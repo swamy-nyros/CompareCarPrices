@@ -19,7 +19,10 @@ from django.views.generic import TemplateView
 from django.conf.urls import patterns, include, url
 from django.conf import settings
 from django.contrib import admin
+
 from compare_cars.views import Get_allMakes,Get_allMakesDetails,Get_allModelDetails,Get_DataFromCity
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from compare_cars.views import Get_allMakes,Get_allMakesDetails,Get_allModelDetails,Get_DataFromCity,Get_AllDataFromCity
 
 admin.autodiscover()
 
@@ -31,11 +34,17 @@ urlpatterns = patterns(
     url(r'^cars/', include('cars_scrapping.urls', namespace='cars')),
     url(r'^$', TemplateView.as_view(template_name='index.html')),
     url(r'^api/$', Get_allMakes.as_view(), name='api_list'),
-    url(r'^api/(?P<car_make>[A-Za-z0-9\w @%._-]+)/$',Get_allMakesDetails, name='api_detail'),
+    # url(r'^api/(?P<car_make>[A-Za-z0-9\w @%._-]+)/$',Get_allMakesDetails, name='api_detail'),
+    # url(r'^api/(?P<car_make>[A-Za-z0-9\w @%._-]+)/(?P<car_model>[A-Za-z0-9\w @%._-]+)/$',Get_allModelDetails, name='api_modeldetail'),
+    # url(r'^api/(?P<city>[A-Za-z0-9\w@%._-]+)/$', Get_DataFromCity, name='api_city'),
+    # url(r'^api/(?P<car_make>[A-Za-z0-9\w @%._-]+)/$',Get_allMakesDetails, name='api_detail'),
     url(r'^api/(?P<car_make>[A-Za-z0-9\w @%._-]+)/(?P<car_model>[A-Za-z0-9\w @%._-]+)/$',Get_allModelDetails, name='api_modeldetail'),
     url(r'^api/(?P<city>[A-Za-z0-9\w@%._-]+)/$', Get_DataFromCity, name='api_city'),
+    url(r'^api/(?P<city>[A-Za-z0-9\w@%._-]+)/(?P<car_make>[A-Za-z0-9\w @%._-]+)/(?P<car_model>[A-Za-z0-9\w @%._-]+)/$',Get_AllDataFromCity, name='api_citydetail'),
+
     
 
  )
 
+urlpatterns+=staticfiles_urlpatterns()
 
